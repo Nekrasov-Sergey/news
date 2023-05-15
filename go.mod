@@ -1,3 +1,3 @@
-module github.com/freshman-tech/news-demo-starter-files
+module github.com/Nekrasov-Sergey/news
 
 go 1.19
