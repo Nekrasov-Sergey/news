@@ -139,10 +139,10 @@ func init() {
 }
 
 func main() {
-	apiKey, exists = os.LookupEnv("apiKey")
-	if !exists {
-		log.Fatal("apiKey must be set")
-	}
+	//apiKey, exists = os.LookupEnv("apiKey")
+	//if !exists {
+	//	log.Fatal("apiKey must be set")
+	//}
 	port, exists = os.LookupEnv("PORT")
 	if !exists {
 		log.Fatal("port must be set")
