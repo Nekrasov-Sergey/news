@@ -131,18 +131,16 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func init() {
-	// loads values from .env into the system
-	if err := godotenv.Load(); err != nil {
-		log.Print("No .env file found")
-	}
-}
-
 func main() {
+	if err := godotenv.Load(); err != nil {
+		log.Fatal("No .env file found")
+	}
+
 	apiKey, exists = os.LookupEnv("apiKey")
 	if !exists {
 		log.Fatal("apiKey must be set")
 	}
+
 	port, exists = os.LookupEnv("PORT")
 	if !exists {
 		log.Fatal("port must be set")
@@ -155,5 +153,6 @@ func main() {
 
 	mux.HandleFunc("/search", searchHandler)
 	mux.HandleFunc("/", indexHandler)
+	log.Println("Server started")
 	http.ListenAndServe(":"+port, mux)
 }
