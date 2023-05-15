@@ -133,7 +133,7 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	if err := godotenv.Load(); err != nil {
-		log.Fatal("No .env file found")
+		log.Println("No .env file found")
 	}
 
 	apiKey, exists = os.LookupEnv("apiKey")
