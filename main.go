@@ -3,7 +3,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/joho/godotenv"
 	"html/template"
+	"log"
 	"math"
 	"net/http"
 	"net/url"
@@ -64,7 +66,9 @@ func (s *Search) PreviousPage() int {
 
 var tpl = template.Must(template.ParseFiles("index.html"))
 
-var apiKey *string
+var apiKey, port string
+
+var exists bool
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	tpl.Execute(w, nil)
@@ -97,7 +101,7 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 	search.NextPage = next
 	pageSize := 20
 
-	endpoint := fmt.Sprintf("https://newsapi.org/v2/everything?q=%s&pageSize=%d&page=%d&apiKey=%s&sortBy=publishedAt&language=en", url.QueryEscape(search.SearchKey), pageSize, search.NextPage, *apiKey)
+	endpoint := fmt.Sprintf("https://newsapi.org/v2/everything?q=%s&pageSize=%d&page=%d&apiKey=%s&sortBy=publishedAt&language=en", url.QueryEscape(search.SearchKey), pageSize, search.NextPage, apiKey)
 	resp, err := http.Get(endpoint)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -127,17 +131,21 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func init() {
+	// loads values from .env into the system
+	if err := godotenv.Load(); err != nil {
+		log.Print("No .env file found")
+	}
+}
+
 func main() {
-	//apiKey = flag.String("apikey", "", "Newsapi.org access key")
-	//flag.Parse()
-
-	//if *apiKey == "" {
-	//	log.Fatal("apiKey must be set")
-	//}
-
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
+	apiKey, exists = os.LookupEnv("apiKey")
+	if !exists {
+		log.Fatal("apiKey must be set")
+	}
+	port, exists = os.LookupEnv("PORT")
+	if !exists {
+		log.Fatal("port must be set")
 	}
 
 	mux := http.NewServeMux()
